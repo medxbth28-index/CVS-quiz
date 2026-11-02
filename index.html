@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>al_witify | MCQ Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf5e9;--card:#fffdf8;--ink:#4a3f35;--mut:#8a7b6b;--acc:#c0763a;--ok:#4f9d69;--okbg:#e3f3e8;--no:#d0584f;--nobg:#fbe5e2;--line:#eadfca}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(160deg,#fdf8ee,#f6ead2);color:var(--ink);overflow:hidden}
+#bg{position:fixed;inset:0;z-index:0}
+.screen{position:fixed;inset:0;z-index:1;display:none;overflow-y:auto;padding:env(safe-area-inset-top,0) 14px env(safe-area-inset-bottom,0)}
+.screen.on{display:block}
+/* home */
+#home .wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;max-width:520px;margin:auto;padding:24px 0;text-align:center}
+.brand{font-family:'Pacifico',cursive;font-size:clamp(54px,15vw,92px);line-height:1.1;background:linear-gradient(90deg,#c0763a,#d9534f,#b8860b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 6px rgba(192,118,58,.25));animation:float 4s ease-in-out infinite;direction:ltr}
+@keyframes float{50%{transform:translateY(-8px)}}
+.sub{color:var(--mut);font-weight:600;margin:0 0 10px}
+.btn{width:100%;border:0;border-radius:18px;padding:16px 18px;font:800 18px 'Cairo';color:#fff;background:linear-gradient(135deg,#d08a4c,#b9692f);box-shadow:0 6px 16px rgba(185,105,47,.28);cursor:pointer;transition:.15s}
+.btn:active{transform:scale(.97)}
+.btn small{display:block;font-weight:400;font-size:13px;opacity:.9}
+.btn.b2{background:linear-gradient(135deg,#7fa88a,#4f8a63);box-shadow:0 6px 16px rgba(79,138,99,.28)}
+.btn.b3{background:linear-gradient(135deg,#c78f9a,#a8667a);box-shadow:0 6px 16px rgba(168,102,122,.28)}
+/* quiz */
+.top{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;background:linear-gradient(#fbf5e9ee,#fbf5e900)}
+.pill{border:0;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:5px 12px;font:700 13px 'Cairo';box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer}
+.pill.s{color:var(--ok);cursor:default}
+.prog{height:6px;border-radius:9px;background:var(--line);overflow:hidden;max-width:720px;margin:0 auto 10px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#d9a066,#c0763a);transition:width .35s}
+.stage{max-width:720px;margin:0 auto;padding-bottom:30px;overflow-x:hidden}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 16px;box-shadow:0 8px 24px rgba(120,90,50,.1);direction:ltr;text-align:left;margin-bottom:16px;animation:inR .4s ease}
+@keyframes inR{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.tag{font:700 12px 'Cairo';color:var(--acc);margin-bottom:6px;direction:rtl;text-align:right}
+.q{font:600 17px/1.5 Georgia,'Times New Roman',serif;margin:0 0 14px}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:9px;font:400 15.5px/1.45 Georgia,serif;color:var(--ink);cursor:pointer;transition:.15s}
+.opt b{min-width:24px;height:24px;border-radius:50%;background:var(--line);display:inline-flex;align-items:center;justify-content:center;font:700 13px 'Cairo';flex:none}
+.opt:active{transform:scale(.99)}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}.opt.ok b{background:var(--ok);color:#fff}
+.opt.no{background:var(--nobg);border-color:var(--no);animation:shake .3s}.opt.no b{background:var(--no);color:#fff}
+.done .opt{pointer-events:none}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fb{direction:rtl;text-align:center;font:800 16px 'Cairo';min-height:26px;margin:4px 0}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+.next{display:none;margin:8px auto 0;width:auto;padding:11px 34px;font-size:16px}
+.done .next{display:block}
+/* result */
+.res{max-width:480px;margin:10px auto 30px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px 18px;box-shadow:0 8px 24px rgba(120,90,50,.12)}
+.res h2{margin:0;font-size:22px}.res .n{font:800 56px 'Cairo';color:var(--acc);margin:6px 0}
+.res .btn{margin-top:10px}
+.foot{position:fixed;bottom:4px;left:0;right:0;text-align:center;font:400 11px 'Pacifico';color:var(--mut);z-index:2;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<section id="home" class="screen on">
+  <div class="wrap">
+    <div class="brand">al_witify</div>
+    <p class="sub">Pathology CVS quiz</p>
+    <button class="btn" onclick="start('l3')">المحاضرة 3<small>20 سؤال</small></button>
+    <button class="btn b2" onclick="start('l4')">المحاضرة 4<small> 20 سؤال</small></button>
+   
+</section>
+
+<section id="quiz" class="screen">
+  <div class="top">
+    <button class="pill" onclick="goHome()">← القائمة</button>
+    <span class="pill" id="cnt">0/20</span>
+    <span class="pill s">✔ <span id="score">0</span></span>
+  </div>
+  <div class="prog"><i id="bar"></i></div>
+  <div class="stage" id="stage"></div>
+</section>
+
+<div class="foot">al_witify</div>
+
+<script>
+const L3=[
+["A 58-year-old man gets substernal chest pressure on climbing stairs that resolves within minutes of rest or nitroglycerin. ECG during pain shows transient ST depression. Coronary angiography is most likely to show:",["A fixed atherosclerotic stenosis of a major epicardial artery","Completely normal arteries","An occluded artery with thrombus","Coronary artery spasm","Myocardial bridging only"],0],
+["A 45-year-old woman with a smoking habit has recurrent chest pain at rest, often in the early morning, with transient ST elevation that resolves spontaneously. Angiography shows no fixed obstructive lesion. The mechanism is:",["Fixed atherosclerotic stenosis","Coronary artery vasospasm","Plaque rupture with occlusive thrombus","Coronary embolism","Aortic dissection involving the ostia"],1],
+["A 62-year-old man with known angina now has pain at rest of increasing frequency over 3 days. Troponin is normal on two measurements. Which statement is most accurate?",["He has stable angina","This is unstable angina — plaque disruption with nonocclusive thrombus and no detectable necrosis","He has had a large transmural infarct","Coronary spasm alone is responsible","The ECG will show permanent Q waves"],1],
+["A 66-year-old diabetic man has 4 hours of crushing chest pain with diaphoresis. ECG shows ST elevation in leads V1–V4. Which coronary artery is most likely occluded?",["Right coronary artery","Left anterior descending artery","Left circumflex artery","Left main coronary artery","Sinus node artery"],1],
+["A 70-year-old diabetic woman is admitted for pneumonia; routine ECG and troponin reveal a silent transmural infarction. Which factor most likely accounts for the absence of chest pain?",["Small infarct size","Diabetic autonomic neuropathy blunting cardiac pain","Right ventricular location","Reperfusion before necrosis","Advanced age alone"],1],
+["A patient presents 2 hours after onset of severe chest pain. Which laboratory strategy best confirms acute myocardial infarction at this early time point?",["A single CK-MB measurement","Serial cardiac troponin I or T measurements","LDH isoenzymes","Aspartate aminotransferase","Myoglobin alone at 24 hours"],1],
+["Ten days after an acute MI, a patient develops recurrent chest pain. A rising CK-MB (after it had normalized) with stable troponin suggests:",["Laboratory error","Reinfarction","Dressler syndrome","Pulmonary embolism","Skeletal muscle injury"],1],
+["A man with severe hypotension from hemorrhagic shock develops chest pain and diffuse subendocardial necrosis without coronary occlusion. This pattern is best described as:",["Transmural infarction","Subendocardial infarction from global hypoperfusion","Myocarditis","Takotsubo cardiomyopathy","Constrictive pericarditis"],1],
+["A patient receives thrombolytic therapy 2 hours into an anterior STEMI with reperfusion. Which microscopic finding is characteristic of reperfused myocardium?",["Wavy fibers only","Contraction bands and hemorrhage","Granulation tissue","Dense collagenous scar","Miliary abscesses"],1],
+["A myocardial biopsy 24 hours after coronary occlusion would most likely show:",["Normal myocardium","Coagulative necrosis with wavy fibers and beginning neutrophilic infiltrate","Macrophage predominance","Mature granulation tissue","Dense fibrous scar"],1],
+["The most common cause of acute myocardial infarction is:",["Coronary vasospasm","Rupture or erosion of an atherosclerotic plaque with superimposed thrombosis","Coronary embolism","Aortic stenosis","Severe anemia"],1],
+["The region of the myocardium most vulnerable to ischemia is the:",["Epicardium","Subendocardium","Mid-myocardium","Papillary muscle tip only","Interatrial septum"],1],
+["The coronary artery most commonly occluded in fatal myocardial infarction supplies the:",["Inferior wall","Anterior wall and anterior two-thirds of the septum (left anterior descending)","Lateral wall","Right ventricle","Sinoatrial node"],1],
+["Cardiac troponin I and T are preferred biomarkers because they are:",["The earliest markers to rise","The most sensitive and specific for myocardial necrosis and remain elevated for days","Released only in massive infarction","Normal in renal failure","Also markers of liver injury"],1],
+["The dominant cell type in an infarct at 2–3 days is the:",["Lymphocyte","Neutrophil","Macrophage","Fibroblast","Plasma cell"],1],
+["The period of greatest risk of myocardial rupture after infarction is:",["The first 24 hours","Days 3 to 7, when the infarct is softest","Week 2 to 3","After scar maturation","Only with reperfusion"],1],
+["A 'demand' (type 2) myocardial infarction occurs when:",["A plaque ruptures in a normal artery","Oxygen demand exceeds supply without acute plaque rupture, as in severe anemia or tachycardia with fixed stenosis","A coronary embolus lodges distally","Spasm alone occludes the artery","Troponin is negative"],1],
+["A transmural infarct differs from a subendocardial infarct in that transmural infarcts:",["Are usually due to global hypoperfusion","Follow regional occlusion of a single coronary artery and typically produce Q waves","Never produce ST elevation","Are always silent","Spare the papillary muscles"],1],
+["The term 'myocardial stunning' refers to:",["Permanent loss of contractile tissue","Transient post-ischemic contractile dysfunction of viable myocardium after reperfusion","Chronic hypoperfusion with downregulated function","Scar expansion","Ischemic preconditioning"],1],
+["Ischemic preconditioning protects myocardium by:",["Increasing plaque stability","Brief episodes of ischemia that increase tolerance to a subsequent prolonged ischemic insult","Collapsing collateral vessels","Raising afterload","Blocking troponin release"],1]
+];
+const L4=[
+["Five days after a large inferior MI, a 68-year-old man develops sudden pulmonary edema and a new holosystolic murmur radiating to the axilla. Echocardiography shows acute severe mitral regurgitation. The most likely structural event is:",["Ventricular septal rupture","Papillary muscle rupture","Free wall rupture","Ventricular aneurysm","Aortic dissection"],1],
+["A 70-year-old woman collapses 4 days after an anterior MI. She is pulseless with electrical activity on the monitor; jugular veins are distended. At resuscitation, pericardiocentesis yields blood. The lethal event was:",["Ventricular septal rupture","Free wall rupture with tamponade","Papillary muscle rupture","Ventricular fibrillation","Pulmonary embolism"],1],
+["Six days after an anterior MI, a patient develops a new harsh holosystolic murmur at the left sternal border with biventricular failure; an oxygen step-up is found in the right ventricle. The diagnosis is:",["Mitral regurgitation","Ventricular septal rupture","Free wall rupture","Mural thrombus","Pericarditis"],1],
+["Eight weeks after a transmural anterior MI, a patient has persistent ST elevation, a paradoxical apical impulse, and an echocardiogram showing a thin dyskinetic apical bulge with laminated thrombus. This is:",["Acute reinfarction","A true left ventricular aneurysm","A pseudoaneurysm","Dressler syndrome","Cardiac rupture"],1],
+["Three weeks after a large MI, a patient develops pleuritic chest pain, a friction rub, and low-grade fever. The ECG shows diffuse concave ST elevation. The most likely diagnosis is:",["Reinfarction","Dressler syndrome (post-MI autoimmune pericarditis)","Acute bacterial pericarditis","Pulmonary embolism","Early post-MI fibrinous pericarditis"],1],
+["A patient with an anterior MI and a large akinetic segment is found 2 weeks later to have a left hemiparesis. The most likely source of the stroke is:",["Carotid atherosclerosis","Embolism from a left ventricular mural thrombus","Infective endocarditis","Atrial myxoma","Fat embolism"],1],
+["A 55-year-old man dies suddenly at home; he had complained of indigestion that morning. Autopsy shows severe triple-vessel atherosclerosis but no completed infarct. The most likely mechanism of death is:",["Massive myocardial rupture","Acute fatal arrhythmia from ischemia","Pulmonary embolism","Aortic dissection","Hemorrhagic stroke"],1],
+["A 60-year-old man with a 40-pack-year smoking history and severe COPD develops progressive exertional dyspnea, jugular venous distension, and edema. Echocardiography shows right ventricular hypertrophy and dilation with a normal left ventricle. The diagnosis is:",["Hypertensive heart disease","Cor pulmonale","Dilated cardiomyopathy","Constrictive pericarditis","Restrictive cardiomyopathy"],1],
+["Autopsy of a patient with 25 years of untreated hypertension shows a heart weighing 550 g with concentric left ventricular thickening and a normal-sized cavity. This morphology reflects:",["Volume overload","Pressure overload hypertrophy","Dilated cardiomyopathy","Hypertrophic cardiomyopathy","Restrictive cardiomyopathy"],1],
+["A patient with chronic severe triple-vessel disease has a dilated, poorly contracting ventricle, diffuse scarring, and heart failure. This end-stage picture is best termed:",["Acute MI","Ischemic cardiomyopathy (chronic ischemic heart disease)","Hypertrophic cardiomyopathy","Myocarditis","Cardiac amyloidosis"],1],
+["The most common immediate mechanism of death in the first hours after acute myocardial infarction is:",["Cardiac rupture","Ventricular arrhythmia","Tamponade","Papillary muscle rupture","Septal rupture"],1],
+["Free wall rupture after myocardial infarction most often leads to:",["Acute left-to-right shunt","Hemopericardium and cardiac tamponade","Chronic aneurysm","Mitral regurgitation","Constrictive pericarditis"],1],
+["A ventricular pseudoaneurysm differs from a true aneurysm in that a pseudoaneurysm:",["Never ruptures","Is a contained rupture whose wall is formed by pericardium and clot, not myocardium","Contains all three wall layers","Is a late complication","Always calcifies"],1],
+["Dressler syndrome is best characterized as:",["Early fibrinous pericarditis","Autoimmune pericarditis occurring weeks after infarction or cardiac surgery","Septic pericarditis","Uremic pericarditis","Constrictive pericarditis"],1],
+["The posteromedial papillary muscle is more vulnerable to infarction than the anterolateral muscle because it:",["Is larger","Has a single blood supply (posterior descending artery only)","Lies in the subendocardium","Has no chordae","Is embryologically distinct"],1],
+["Sudden cardiac death is defined as unexpected death from cardiac causes within:",["1 minute of symptoms","1 hour of symptom onset (or within 24 hours of last being seen well)","1 week of infarction","24 hours of hospitalization","1 month of discharge"],1],
+["The most common pathologic substrate in adults who die suddenly of cardiac causes is:",["Myocarditis","Coronary atherosclerosis with acute or healed ischemic injury","Hypertrophic cardiomyopathy","Amyloidosis","Valvular disease"],1],
+["Cor pulmonale is defined as right ventricular hypertrophy and/or dilation secondary to:",["Systemic hypertension","Disorders of the lungs or pulmonary vasculature causing pulmonary hypertension","Left-sided valvular disease only","Congenital shunts","Pulmonary valve stenosis"],1],
+["The histologic hallmark of long-standing hypertensive heart disease in the kidney and small arteries (arteriolosclerosis) directly parallels which cardiac change?",["Myocyte hyperplasia","Concentric myocyte hypertrophy with interstitial fibrosis","Fatty infiltration","Myocytolysis","Granuloma formation"],1],
+["After myocardial infarction, 'ventricular remodeling' refers to:",["Scar contraction","Progressive dilation and shape change of the ventricle driven by infarct expansion and hypertrophy of surviving muscle","Valve calcification","Coronary collateral growth","Regression of hypertrophy"],1]
+];
+const NAMES={l3:"محاضرة 3",l4:"محاضرة 4",all:"المحاضرتان"};
+const $=id=>document.getElementById(id);
+let Q=[],i=0,sc=0,mode='';
+
+/* sound */
+let ac;
+function tone(f,t,d,type,v){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+d);o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+d)}
+function snd(ok){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();
+ if(ok){tone(660,0,.12,'sine',.25);tone(990,.1,.18,'sine',.25)}else{tone(200,0,.2,'sawtooth',.15);tone(150,.12,.22,'sawtooth',.15)}}catch(e){}}
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
+function goHome(){show('home')}
+function start(m){mode=m;
+ Q=m==='l3'?L3.map((q,k)=>[...q,'L3 · Q'+(k+1)]):m==='l4'?L4.map((q,k)=>[...q,'L4 · Q'+(k+1)]):[...L3.map((q,k)=>[...q,'Lecture 3 · Q'+(k+1)]),...L4.map((q,k)=>[...q,'Lecture 4 · Q'+(k+1)])];
+ if(m!=='all')Q=Q.map((q,k)=>[q[0],q[1],q[2],(m==='l3'?'Lecture 3':'Lecture 4')+' · Q'+(k+1)]);
+ i=0;sc=0;$('score').textContent=0;show('quiz');render()}
+function render(){
+ const L='ABCDE';ans=0;
+ $('cnt').textContent='0/'+Q.length;$('bar').style.width='0%';
+ $('stage').innerHTML=Q.map((q,n)=>`<div class="card" data-n="${n}"><div class="tag">${q[3]}</div><p class="q">${q[0]}</p>`+
+ q[1].map((o,k)=>`<button class="opt" data-k="${k}"><b>${L[k]}</b><span>${o}</span></button>`).join('')+
+ `<div class="fb"></div></div>`).join('')+
+ `<div class="res" id="res" style="display:none"><h2>${NAMES[mode]} — انتهى الاختبار 🎉</h2><div class="n" id="rn"></div><div id="rp"></div>
+ <button class="btn" onclick="start('${mode}')">إعادة الاختبار</button><button class="btn b2" onclick="goHome()">القائمة الرئيسية</button></div>`;
+ document.querySelectorAll('.card').forEach(c=>c.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(c,+b.dataset.k)));
+ $('quiz').scrollTop=0;
+}
+let ans=0;
+function pick(c,k){
+ if(c.classList.contains('done'))return;c.classList.add('done');
+ const a=Q[+c.dataset.n][2],opts=c.querySelectorAll('.opt'),ok=k===a;
+ opts[a].classList.add('ok');if(!ok)opts[k].classList.add('no');
+ const fb=c.querySelector('.fb');fb.className='fb '+(ok?'ok':'no');fb.textContent=ok?'✔ صح':'✘ خطأ';
+ if(ok){sc++;$('score').textContent=sc}snd(ok);
+ ans++;$('cnt').textContent=ans+'/'+Q.length;$('bar').style.width=(ans/Q.length*100)+'%';
+ if(ans===Q.length){const r=$('res');$('rn').textContent=sc+'/'+Q.length;$('rp').textContent=Math.round(sc/Q.length*100)+'%';r.style.display='block';setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'center'}),600)}
+}
+
+/* floating particles */
+const cv=$('bg'),cx=cv.getContext('2d');let P=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight}rs();addEventListener('resize',rs);
+const cols=['#e8c9a0','#f0d9b5','#d9b38c','#f4e2c4','#e5b98f','#cfd8b0'];
+for(let k=0;k<45;k++)P.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:3+Math.random()*14,vx:(Math.random()-.5)*.4,vy:-.15-Math.random()*.5,c:cols[k%cols.length],a:.25+Math.random()*.35,p:Math.random()*6});
+(function loop(){cx.clearRect(0,0,cv.width,cv.height);
+ for(const p of P){p.p+=.01;p.x+=p.vx+Math.sin(p.p)*.3;p.y+=p.vy;
+  if(p.y<-20){p.y=cv.height+20;p.x=Math.random()*cv.width}
+  if(p.x<-20)p.x=cv.width+20;if(p.x>cv.width+20)p.x=-20;
+  cx.globalAlpha=p.a;cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill()}
+ requestAnimationFrame(loop)})();
+</script>
+</body>
+</html>
